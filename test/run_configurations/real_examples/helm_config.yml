@@ -1,0 +1,75 @@
+alg_specs:
+    preprocess: None # leave blank or set to None if you don't want to run any
+    postprocess:
+        smoothing: 'median' # choose from median, average, or gaussian
+    backsub:
+        list: ['mog2'] # is a list, can supply more than one value
+        combo: ['and'] # how to add backsub together, list of ands or ors, should be size of backsub - 1
+    detects: ['helm_orig'] # is a list, can supply more than one
+    tracks: 'helm_orig'
+
+backsub:
+    # mixture of gaussians 2
+    mog2:
+        varThresh: 15 # opencv default is 16
+        history: 200 # opencv default is 200
+        alpha: 0.05 # learning rate, around 0.05 to 0.10
+    # original helm algorithm
+    minmax:
+        lag: 300 # lag frames
+        absthresh: 5 # absolute difference threshold, typically values around 4-6
+        pcthresh: 99.7 # percent difference threshold, typically values around 99
+    # adaptive difference
+    adaptive_diff:
+        abs_thresh: 5
+        pc_thresh: 99.5 # should be around 99 or higher
+        alpha: 0.05 # default is 0.05
+        startup_frames: 20 # number of frames to use on start-up
+data:
+  factor: 2
+  hologram_str: '.tif'
+  lower_dir: 'Holograms'
+  upper_dir: '//halo_nobackup/owls-dev/shawna/experiments_shawn/helm_optimization_experiment/'
+
+detects:
+  helm_orig:
+    epsilon_px:
+      param_type: 'float'
+      range: [1.5, 7.0]
+    max_uncert_px:
+      param_type: 'float'
+      range: [10.0, 200.0]
+    min_px:
+      param_type: 'int'
+      range: [6, 20]
+    min_weight:
+      param_type: 'int'
+      range: [500, 550]
+    noise_px:
+      param_type: 'float'
+      range: [0.1, 0.9]
+    threshold:
+      param_type: 'int'
+      range: [0, 255]
+
+output:
+  output_dir: 'output/tmp/'
+
+preprocess:
+    adapthist:
+        kernel: 32
+        clip: 0.01
+
+postprocess:
+    smoothing:
+        window_size: 5
+
+skip_frames: 0
+
+tracks:
+    helm_orig:
+        max_assignment_sigma: 2.5
+        min_track_obs: 5
+        max_position_uncertainty: 50
+
+debug: False

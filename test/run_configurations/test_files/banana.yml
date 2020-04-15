@@ -1,0 +1,9 @@
+param1:
+  inputs:
+    x: 1.0
+param2:
+  inputs:
+    y: 1.0
+output: "temp/"
+metrics: "metrics.csv"
+debug: False

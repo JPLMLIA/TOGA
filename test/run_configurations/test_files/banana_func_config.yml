@@ -1,0 +1,9 @@
+x:
+  param_type: "float"
+  range: [-1.5,1.5]
+y:
+  param_type: "float"
+  range: [0.7,2]
+output: "temp/"
+metrics: "metrics.csv"
+debug: False

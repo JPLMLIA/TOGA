@@ -1,0 +1,17 @@
+genetics:
+  gene:
+    debug: false
+    metrics: metrics.csv
+    output: temp/
+    x: -0.5959399191610344
+    y: 1.3129044895721622
+lineage:
+  generation_num: 0
+  mutator: partial
+  parent1: 8e647c73d5064c00b26fec50f9481b4f
+  parent2: d23549daf5ed4ddea2b87845084956e6
+metrics:
+  banana: 94.27746558565269
+  sinc: -0.10290738197649454
+path: null
+uuid: 8ddc7371a7a94eadae27646329ac9009

@@ -1,0 +1,25 @@
+detects:
+  distance: 17
+helm:
+  det_resize_amt: 2
+  detects_str: '*.track'
+  lower_dir: ''
+  skip_frame: 0
+  upper_dir: output/tmp/
+labeled:
+  ext: .csv
+  folder: //halo_nobackup/owls-dev/shawna/experiments_shawn/helm_optimization_experiment_tracks/
+  type: fiji
+output:
+  dir: output/
+  file: metrics.csv
+trackAssociation:
+  buffer_size: 10
+  coverage_threshold_percent_a_covers_b: 20
+  coverage_threshold_percent_b_covers_a: 10
+  frame_padding_subsequence: 1
+  subsequence_a_covers_b_lower_limit: 50
+  subsequence_b_covers_a_lower_limit: 10
+  time_window: 5
+tracks:
+  tracks_metrics: true

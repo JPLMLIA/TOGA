@@ -1,0 +1,23 @@
+alg_specs:
+  backsub:
+    combo: [and, or]
+    list: [minmax, adaptive_diff, adaptive_diff]
+  detects: [helm_orig]
+  preprocess: None
+  tracks: helm_orig
+backsub:
+  adaptive_diff: {abs_thresh: 5, alpha: 0.1529629618614427, pc_thresh: 82.8815951646073,
+    startup_frames: 68}
+  minmax: {absthresh: 7.336558985650368, lag: 84, pcthresh: 28.73285278443685}
+  mog2: {alpha: 0.05, history: 200, varThresh: 15}
+data: {factor: 2, hologram_str: .png, lower_dir: Holograms, upper_dir: /home/shawna/toga_files/cleaned_mp4}
+detects:
+  helm_orig: {epsilon_px: 4.944150171004009, max_uncert_px: 51.47531098940324, min_px: 5,
+    min_weight: 507, noise_px: 0.6446219270668925, threshold: 99}
+output: {output_dir: output/tmp/}
+preprocess:
+  adapthist: {clip: 0.2136632083137514, kernel: 32.70138020943372}
+skip_frames: 15
+tracks:
+  helm_orig: {max_assignment_sigma: 2.8392538669043135, max_position_uncertainty: 49,
+    min_track_obs: 4}

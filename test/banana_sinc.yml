@@ -1,0 +1,6 @@
+inputs:
+  x: 1.0
+  y: 1.0
+output: "temp/"
+metrics: "metrics.csv"
+debug: True

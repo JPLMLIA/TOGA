@@ -1,0 +1,59 @@
+server:
+  host: 0.0.0.0
+  port: 9110
+
+hosts:
+  hostnames: ["analysis", "paralysis", "shiva", "buffalo"]
+
+workers:
+  max_workers: 10
+  max_worker_servers: 4
+
+work_dir:
+  base_dir: "/Users/shawna/experiment_dir"
+  random_config: "random_config/"
+  work_dir: "workdir/"
+  current_best: "best/"
+  best_graphs: "graph/"
+
+genetic_algorithm:
+  mutators:
+    crossover: 100
+    gaussian: 60
+    random_attribute: 30
+    completely_new: 30
+  optimization_strategy:
+    maximize: False
+  individuals_per_bin: 10
+  generation_size: 1000
+  gene_config: "/Users/shawna/PycharmProjects/TOGA/config/banana_func_config.yml"
+
+metrics:
+  fitness: ["banana", "sinc"]
+  fixed_axis: "banana"
+  bins: 15
+  bin_range: [0, 400]
+  metrics_location: "temp/metrics.csv"
+
+configs:
+  config1:
+    filepath: "/Users/shawna/PycharmProjects/TOGA/config/banana.yml"
+    map_to_gene: True
+    command:
+      cmd: "python /Users/shawna/PycharmProjects/HELM/research/code_luke/simple_payload.py"
+      map_to_arg: "-c"
+
+#make dictionary of run commands with params and environment
+run_commands:
+  environment:
+    conda:
+      use: False
+      conda_environment: ""
+  commands:
+    command1:
+      cmd: "python /Users/shawna/PycharmProjects/HELM/research/code_luke/simple_payload.py"
+      args:
+        arg1:
+          key: '-c'
+          value: ""
+      unmutable_args: ""

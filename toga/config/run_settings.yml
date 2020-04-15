@@ -1,0 +1,49 @@
+# --------
+# expected files
+
+# file path of program under optimizations metrics outputs.
+# for example HELM will generate at os.path.join(os.cwd(), outputs, 'metrics.csv')
+# toga is assuming you are generating at cwd and use that to avoid overriding output directories
+metrics_location: "temp/metrics.csv"
+
+# path to file that has parameters and ranges of hyperparameters being optimized
+gene_template: "/Users/shawna/PycharmProjects/TOGA/test/run_configurations/test_files/banana_func_config.yml"
+
+
+# --------
+# toga worker settings
+workers:
+  max_workers: 16 # how many processes should each worker machine run
+  max_run_time: 3600 # time in seconds before run auto fails
+  over_fill_executor: 5
+
+# --------
+# where toga will write to
+work_dir:
+  base_dir: "/Users/shawna/experiment_dir"
+
+
+# --------
+# make a runnable command for your process under optimization
+
+environment:
+  # currently only supports native python or conda. No virtualenv
+  conda:
+    use: False # True
+    environment_name: "helm36" # example: helm36
+  conda_shell_executable_location: "/anaconda3/etc/profile.d/conda.sh" # Use if running on mac os x
+
+
+# makes a runnable command out of the arguments and assumes your system arguments are handled with argparse
+command:
+    cmd: "python /Users/shawna/PycharmProjects/TOGA/test/banana_sinc.py"
+    # which argparse argument does your hyper parameters config file map to?
+    gene_mapping:
+      key: "-c"
+    # write your extra arguments that you need to run your system under test that won't change each run
+    static_args: "" # example: "--name 'john doe' --size 10 "
+
+# from this config the output command is:
+
+# $: source activate /anaconda3/etc/profile.d/conda.sh; conda activate helm36;
+#       toga_wrapper --tracker_config /Users/shawna/PycharmProjects/TOGA/config/helm1.0/tracker_config.yml

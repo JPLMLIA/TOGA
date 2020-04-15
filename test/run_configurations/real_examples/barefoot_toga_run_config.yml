@@ -1,0 +1,63 @@
+server:
+  host: 0.0.0.0
+  port: 9119
+
+workers:
+  max_workers: 16 # how many processes should each worker machine run
+  max_run_time: 99000 # Don't kill processes that take forever for this run
+
+work_dir:
+  base_dir: "/halo_nobackup/owls-dev/shawna/experiment_dir"
+
+genetic_algorithm:
+  mutators: # Count weight for all the mutators and the likelihood of one being chosen is mutator/total crossover/total = 100/220 = ~ 0.45
+    scale:
+      full: 10
+      partial: 50
+      min: 30
+    type:
+      binary_block:
+        random: 10
+        gaussian_step: 50
+        crossover: 1
+        gaussian_random: 15
+  optimization_strategy:
+    maximize: True # True to optimize for maximises and False to optimize for minimums
+  individuals_per_bin: 5 # how many of the top performers are stored as valid parent options per bin
+  generation_size: 25 # how many children are creates each generation
+  save_local_state: True
+  gene:
+    original: "/home/shawna/projects/TOGA/config/barefoot_rover_files/barefoot_rover.yaml" # path to file that you use to run your system TOGA is optimizing
+    gene_config: "/home/shawna/projects/TOGA/config/barefoot_rover_files/barefoot_gene_range.yml" # path to file that has parameters and ranges of hyperparameters being optimized
+
+metrics: # assumes your system generates a csv file that scores how well it performed with a given input setting
+  fitness: # the column names from your metrics that should be used for fitness scoring
+    accuracy: # this shows how to define a free metric. You should only have 1 free metric per set of metrics. The others should be treated as bins where each value in a bin is treated as 1 value. So that you can get the highest y for each x range. Or highest z for each x,y.
+      fixed_axis: False
+      range: [0.0, 1.0]
+      index: 0
+    average_time_to_compute: # A fixed axis treats all values in some range as 1 value. [0, 400] with 10 partitions means, all numbers 0-40 are treated as 1 value.
+      fixed_axis: True
+      range: [0, 170]
+      paritions: 20
+      index: 1
+    feature_count:
+      fixed_axis: True
+      range: [1, 20]
+      partitions: 20
+      index: 2
+  metrics_location: "toga_output.csv" # the metrics file location relative to the current working directory
+
+#make dictionary of run commands with params and environment
+run_command:
+  environment: # Keep use as false to use native python, otherwise True if your system TOGA is optimizing uses conda, virtualenv or a specific linux alias respectively
+    conda:
+      use: True # True
+      environment_name: "barefoot" # example: helm36
+    conda_shell_executable_location: "/anaconda3/etc/profile.d/conda.sh" # Use if running on mac os x
+  command: # this assumes your system arguments are handled with argparse
+      cmd: "togawrapper"
+      gene_mapping: # which argparse argument does your hyper parameters config file map to?
+        key: "--features"
+      # write your extra arguments that you need to run your system under test that won't change each run
+      static_args: "--datadir //halo_nobackup/owls-dev/shawna/barefoot_files/composition --datafile //halo_nobackup/owls-dev/shawna/barefoot_files/composition_UnifiedData.h5 --burnin 50 None --module material --model_type classifier --version v1 --date _toga_generated -fl //halo_nobackup/owls-dev/shawna/barefoot_files/full_feature_list.yaml" # example: "--name 'john doe' --size 10 "

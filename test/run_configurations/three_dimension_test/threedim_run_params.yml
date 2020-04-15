@@ -1,0 +1,64 @@
+server:
+  host: 0.0.0.0
+  port: 9119
+
+workers:
+  max_workers: 4 # how many processes should each worker machine run
+  max_run_time: 3600
+
+work_dir:
+  base_dir: "/Users/shawna/experiment_dir"
+
+genetic_algorithm:
+  mutators: # Count weight for all the mutators and the likelihood of one being chosen is mutator/total crossover/total = 100/220 = ~ 0.45
+    scale:
+      full: 10
+      partial: 50
+      min: 30
+    type:
+      int:
+        random: 10
+        gaussian_step: 50
+        crossover: 1
+        gaussian_random: 15
+      float:
+        random: 20
+        gaussian_random: 20
+        gaussian_step: 50
+        crossover: 1
+  optimization_strategy:
+    maximize: False # True to optimize for maximises and False to optimize for minimums
+  individuals_per_bin: 10 # how many of the top performers are stored as valid parent options per bin
+  generation_size: 100 # how many children are creates each generation
+  save_local_state: True
+  gene:
+    original: "/Users/shawna/PycharmProjects/TOGA/test/three_dimension_test/threedim_params.yml" # path to file that you use to run your system TOGA is optimizing
+    gene_config: "/Users/shawna/PycharmProjects/TOGA/test/three_dimension_test/threedim_func_config.yml" # path to file that has parameters and ranges of hyperparameters being optimized
+
+metrics: # assumes your system generates a csv file that scores how well it performed with a given input setting
+  fitness: # the column names from your metrics that should be used for fitness scoring
+    gamma:
+      fixed_axis: False
+      range: [-0.5, 0.5]
+      partitions: 40
+      index: 1
+    beta: # A fixed axis treats all values in some range as 1 value. [0, 400] with 10 partitions means, all numbers 0-40 are treated as 1 value.
+      fixed_axis: True # so in this case a score of {banana: 95, sinc: 22} is higher than {banana: 87, sinc: 39}.
+      range: [0, 400] # with more than 2 axes it works the same way where each
+      partitions: 50
+      index: 0
+  metrics_location: "temp/metrics.csv" # the metrics file location relative to the current working directory
+
+#make dictionary of run commands with params and environment
+run_command:
+  environment: # Keep use as false to use native python, otherwise True if your system TOGA is optimizing uses conda, virtualenv or a specific linux alias respectively
+    conda:
+      use: False # True
+      environment_name: "" # example: helm36
+    conda_shell_executable_location: "/anaconda3/etc/profile.d/conda.sh" # Use if running on mac os x
+  command: # this assumes your system arguments are handled with argparse
+      cmd: "python /Users/shawna/PycharmProjects/TOGA/test/three_dimensional_optimization_test.py"
+      gene_mapping: # which argparse argument does your hyper parameters config file map to?
+        key: "-c"
+      # write your extra arguments that you need to run your system under test that won't change each run
+      static_args: "" # example: "--name 'john doe' --size 10 "
