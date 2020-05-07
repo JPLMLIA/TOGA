@@ -1,0 +1,18 @@
+
+# --------
+# Gene Fitness Settings
+# match the column names of the program under optimization's metrics as keys under fitness
+
+fitness:
+    # from helm we have Precision/Recall saved to a metrics dataframe that TOGA will reference
+
+  fixed-axis:
+    fixed_axis: True
+    range: [0,10]
+    partitions: 10
+    index: 0
+  metric: # A fixed axis treats all values in some range as 1 value. [0, 400] with 10 partitions means, all numbers 0-40 are treated as 1 value.
+    fixed_axis: False # so in this case a score of {banana: 95, sinc: 22} is higher than {banana: 87, sinc: 39}.
+    range: [0, 100] # with more than 2 axes it works the same way where each
+    partitions: 10
+    index: 1

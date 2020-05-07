@@ -29,4 +29,14 @@ mutators:
       gaussian_random: 20
       gaussian_step: 50
       crossover: 1
+    bool:
+      random: 10
+      gaussian_step: 0
+      crossover: 90
+      gaussian_random: 0
+    binary_block: #Note, one of these mutation methods is chosen for the entire block, i.e. not per bit
+      random: 5
+      gaussian_random: 0
+      gaussian_step: 0
+      crossover: 95
 
