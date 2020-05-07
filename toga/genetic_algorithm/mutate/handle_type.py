@@ -31,7 +31,7 @@ def mutate(gene_type: GeneType.IntType, range_config: dict, value, values: list,
                     mutator_params
                     ).mutate()
     if gene_type == 'float':
-        frequency = mutator_params.get('int')
+        frequency = mutator_params.get('float')
         mutator = select_mutator(frequency)
         _ = FloatGene(range_config,
                       values,
@@ -39,12 +39,16 @@ def mutate(gene_type: GeneType.IntType, range_config: dict, value, values: list,
                       mutator_params
                       ).mutate()
     if gene_type == 'bool':
+        frequency = mutator_params.get('bool')
+        mutator = select_mutator(frequency)
         _ = BooleanGene(range_config,
                         values,
                         mutator,
                         mutator_params
                         ).mutate()
     if gene_type == 'binary_block':
+        frequency = mutator_params.get('binary_block')
+        mutator = select_mutator(frequency)
         _ = BinaryBlockGene(range_config,
                             values,
                             mutator,
