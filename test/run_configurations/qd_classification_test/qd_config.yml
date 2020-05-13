@@ -1,0 +1,32 @@
+conv3_depth:
+  param_type: 'int'
+  range: [4, 8]
+conv4_depth:
+  paaram_type: 'int'
+  range: [6, 36]
+pooling:
+  components:
+    avg: 0
+    max: 0
+  sum_range: [1, 1]
+  param_type: 'binary_block'
+optimizer:
+  components:
+    adam: 0
+    rmsprop: 0
+    sgd: 0
+  sum_range: [1, 1]
+  param_type: 'binary_block'
+resnet_version:
+  components:
+    v1: 0
+    v2: 0
+    next: 0
+  sum_range: [1, 1]
+  param_type: 'binary_block'
+learning_neg_exponent:
+  param_type: 'float'
+  range: [1, 4]
+output: "temp/"
+metrics: "metrics.csv"
+debug: False

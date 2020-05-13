@@ -1,0 +1,42 @@
+
+# --------
+# General GA settings
+
+
+optimization_strategy_maximize: True # True to optimize for maximises and False to optimize for minimums
+individuals_per_bin: 3 # allow more than 1 high performer to allow more variation
+
+# --------
+# toga mutators settings
+
+mutators:
+  # what percentage of the gene should be mutated per generation
+  scale:
+    full: 10
+    partial: 50
+    min: 30
+
+  # relative likelihood for each mutator type.
+  # ex: If a gene is a float this allows you to roll float specific mutators at the defined rate
+  type:
+    int:
+      random: 10
+      gaussian_step: 90
+      crossover: 0
+      gaussian_random: 0
+    float:
+      random: 10
+      gaussian_random: 0
+      gaussian_step: 60
+      crossover: 30
+    bool:
+      random: 10
+      gaussian_step: 0
+      crossover: 90
+      gaussian_random: 0
+    binary_block: #Note, one of these mutation methods is chosen for the entire block, i.e. not per bit
+      random: 20
+      gaussian_random: 0
+      gaussian_step: 0
+      crossover: 80
+
