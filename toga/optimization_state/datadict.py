@@ -90,7 +90,7 @@ class DataDict(object):
             return False
 
         for metrics in self.fitness_metrics:
-            if not individual_metrics.get(metrics.name):
+            if individual_metrics.get(metrics.name) is None:
                 return False
         return True
 
