@@ -8,12 +8,13 @@ import time
 import math
 import random
 
-#import tempfile
-#from qd_classification.cli import run_resnet_cifar10_trial
+import tempfile
+from qd_classification.cli import run_resnet_cifar10_trial
 
 cwd = os.getcwd()
 
 def main():
+    print("Calling wrapper")
     import argparse
 
     parser = argparse.ArgumentParser()
@@ -33,55 +34,60 @@ class Optimization(object):
     Optimization wrapper object for TOGA test case
     """
 
+    @staticmethod
     def parseEnumBlock(d):
         for key in d:
             if d[key]:
                 return key
+        for key in d: #default to first
+            return key
 
     def __init__(self, parameters_config=''):
         self.param_config = self.read_input_params(parameters_config)
 
-        directory = tempfile.TemporaryDirectory
+        trial_directory = cwd
+        data_directory = '/scratch_lg/owls-dev/schibler/datasets/'
         conv3_depth = self.param_config['conv3_depth']
         conv4_depth = self.param_config['conv4_depth']
-        pooling = parseEnumBlock(self.param_config['pooling'])
-        optimizer = parseEnumBlock(self.param_config['optimizer'])
-        resnet_version = parseEnumBlock(self.param_config['resnet_version'])
+        pooling = self.parseEnumBlock(self.param_config['pooling'])
+        optimizer = self.parseEnumBlock(self.param_config['optimizer'])
+        resnet_version = self.parseEnumBlock(self.param_config['resnet_version'])
         learning_rate = 10 ** (-1 * self.param_config['learning_neg_exponent'])
 
-        p = self.optimize_this_function(directory, conv3_depth, conv4_depth, 
+        p = self.optimize_this_function(trial_directory, data_directory, conv3_depth, conv4_depth, 
             pooling, optimizer, resnet_version, learning_rate)
 
-        self.write_metrics(0, p)
+        print("Computed " + str(p))
+
+        self.write_metrics(0.5, p)
         if self.param_config['debug'] == True:
             self.test()
 
+        print("Wrote metrics")
+
     @staticmethod
-    def optimize_this_function(dir, c3d, c4d, p, o, rv, lr):
+    def optimize_this_function(tdir, ddir, c3d, c4d, p, o, rv, lr):
         """
 
         """
 
-        #TODO: hook up qd_classification
-        if 0:
-            best_val_acc = run_resnet_cifar10_trial(
-            directory=dir,
+        best_val_acc = run_resnet_cifar10_trial(
+            trial_dir=tdir,
+            data_dir=ddir,
             conv3_depth=c3d,
             conv4_depth=c4d,
             pooling=p,
             resnet_version=rv,
             optimizer=o,
             learning_rate=lr,
-            epochs=3,
-            steps_per_epoch=5,
-            batch_size=64,
+            epochs=40,
+            steps_per_epoch=100,
+            batch_size=128,
             executions_per_trial=3)
-        else:
-            best_val_acc = 0.5
 
         print(best_val_acc)
 
-        return best_vaal_acc
+        return best_val_acc
 
     @staticmethod
     def read_input_params(paramater_config=''):
