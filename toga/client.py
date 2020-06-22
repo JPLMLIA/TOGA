@@ -18,6 +18,7 @@ import logging
 import queue
 import signal
 from concurrent.futures import ProcessPoolExecutor
+import threading
 
 from toga.genetic_algorithm.genetic_algorithm import GeneticAlgorithm
 from toga.toga_settings import Settings
@@ -56,6 +57,10 @@ class TogaClient(object):
         # While preventing it from overfilling to the point where we spend too long on sub-optimal population building
         # up in queue
         self.population = queue.Queue(maxsize=self.settings.overfill_executor_limit)
+
+        # Track number of trials run since last high performer
+        self.trials = 0
+        self.trialLock = threading.Lock()
 
     def run(self):
         logging.info('Starting tasks, Genetic Algorithm Loop and server heartbeat synchronization')
@@ -110,7 +115,14 @@ class TogaClient(object):
             try:
                 high_performer = self.genetic_algorithm.score_results(result)
                 logging.info(f'Completed {result.__repr__}')
+                self.trialLock.acquire()
+                self.trials += 1
+                self.trialLock.release()
                 if len(high_performer) > 0:
+                    self.trialLock.acquire()
+                    high_performer[0]['trials'] = self.trials
+                    self.trials = 0
+                    self.trialLock.release()
                     res = await self.submit_results(high_performer[0])
                     print(json.loads(res))
                 else:
