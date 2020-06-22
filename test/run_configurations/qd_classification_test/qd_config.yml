@@ -2,7 +2,7 @@ conv3_depth:
   param_type: 'int'
   range: [4, 8]
 conv4_depth:
-  paaram_type: 'int'
+  param_type: 'int'
   range: [6, 36]
 pooling:
   components:

@@ -91,7 +91,37 @@ class BinaryBlockGene(GeneMutate):
 
         :return:
         """
+        
         parents = [x for x in self.parents]
+
+        #Flips a number of genes to target `flip_to`
+        #First gathers all parent gene candidates
+        #If sufficient, selects a unique subset from weighted distribution
+        #Else augments with randomly selected genes
+        def flip(flip_num, flip_to):
+            keys = []
+            unique_keys = set()
+            for p in parents:
+                for key, item in p.items():
+                    if item == flip_to:
+                        if _dict[key] != flip_to:
+                            keys.append(key)
+                            if key not in unique_keys:
+                                unique_keys.add(key)
+                    
+            flip_set = set()
+            if len(unique_keys) < flip_num:
+                remaining_num = flip_num - len(unique_keys)
+                remaining_candidates = list(filter(lambda x: _dict[x] != flip_to and x not in unique_keys, _dict))                        
+                flip_set = unique_keys.union(set(np.random.choice(remaining_candidates, size=remaining_num, replace=False)))
+            else:
+                while len(flip_set) < flip_num:
+                    remaining_num = flip_num - len(flip_set)
+                    flip_set = flip_set.union(set(np.random.choice(keys, size=remaining_num, replace=False)))
+                    keys = list(filter(lambda x: x not in flip_set, keys))
+            for i in flip_set:
+                _dict[i] = flip_to
+
         if parents:
             _dict = {}
             for key, item in parents[0].items():
@@ -99,12 +129,17 @@ class BinaryBlockGene(GeneMutate):
                 _dict[key] = parents[selected_parent][key]
             valid_range = self.dictionary.get('sum_range')
             items_on = sum(x == 1 for x in _dict.values())
-            if items_on > max(valid_range):
-                remove_num = items_on - valid_range
-                for i in np.random.choice(list(_dict.keys()), size=remove_num, replace=False):
-                    _dict[i] = 0
+            if items_on > max(valid_range) or items_on < min(valid_range):
+                if items_on > max(valid_range):
+                    flip_num = items_on - max(valid_range)
+                    flip_to = 0
+                else:
+                    flip_num = min(valid_range) - items_on
+                    flip_to = 1
+                flip(flip_num, flip_to)
+
             return _dict
-        return self.dictionary.get('components')
+        return self.random()
 
     def random(self):
         """
