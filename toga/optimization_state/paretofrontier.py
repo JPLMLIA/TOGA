@@ -22,14 +22,15 @@ from toga.optimization_state.datadict import DataDict
 
 class ParetoFrontier(object):
 
-    def __init__(self, experiment_dir, maximize, fitness_metrics, amount_per_bin):
+    def __init__(self, experiment_dir, maximize, fitness_metrics, amount_per_bin, history_log):
         self.experiment_dir = experiment_dir
         self.maximize = maximize
         self.fitness_metrics = fitness_metrics
         self.amount_per_bin = amount_per_bin
         self.datadict = DataDict(fitness_metrics=self.fitness_metrics,
                                  maximize=self.maximize,
-                                 amount_per_bin=self.amount_per_bin)
+                                 amount_per_bin=self.amount_per_bin,
+                                 history_log=history_log)
 
         self._plot = Plot(self.fitness_metrics,
                           self.maximize,
@@ -66,7 +67,8 @@ class ParetoFrontier(object):
         pprint.PrettyPrinter().pprint(self.datadict.get_points())
 
     def plot(self, generation_num=0):
-        print(self.datadict.get_points())
+        print("Top performers per bin at trial {0}...".format(self.datadict.trial_count))
+        print(self.datadict.get_points())      
         self._plot.plot(generation_num=generation_num,
                         points=self.datadict.get_points())
 

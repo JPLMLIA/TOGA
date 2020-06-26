@@ -23,7 +23,6 @@ from toga.optimization_state.paretofrontier import ParetoFrontier
 from toga.server.frontier_state import FrontierState
 from toga.toga_settings import Settings
 
-
 class TogaServer(object):
 
     running_tests = False
@@ -36,7 +35,8 @@ class TogaServer(object):
         # Storage for current run state of optimizer for front end
         self.pareto_frontier = ParetoFrontier(self.settings.output_dir, self.settings.optimization_strategy,
                                               Metrics(self.settings.optimization_metrics).metrics,
-                                              self.settings.individual_per_bin)
+                                              self.settings.individual_per_bin,
+                                              self.settings.history_log)
         # Update state from previous runs
         self.pareto_frontier.serialize()
 

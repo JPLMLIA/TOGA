@@ -36,7 +36,6 @@ class Population(object):
         self.population = None
 
     def create_individual(self, config):
-
         with open(config, 'r') as f:
             gene = yaml.safe_load(f)
         individual = Individual(uuid=uuid.uuid4().hex)
@@ -51,12 +50,10 @@ class Population(object):
         if not active:
             return []
         keys = list(active.keys())
-        bins = numpy.random.choice(keys, 2, replace=True)
-
+        binIDs = numpy.random.choice(len(keys), 2, replace=True)
         parents = []
-        for bin in bins:
-            parents.append(numpy.random.choice(active[bin], replace=True))
-
+        for id in binIDs:
+            parents.append(numpy.random.choice(active[keys[id]], replace=True))
         return parents
 
     def select_mutator(self):
@@ -79,7 +76,6 @@ class Population(object):
         return _parents
 
     def mutate(self, config):
-
         parents = self.get_random_parents()
         mutator = self.select_mutator()
 
@@ -99,10 +95,16 @@ class Population(object):
         gene = Genetics(gene=GeneTree(config=config, parents=_parents, mutator=mutator,
                                       mutator_params={'type_probability': self.gene_mutation_type}).mutate())
 
+        gn = 1 #Add one for this mutation
+        if parent1:
+            gn += parent1['lineage']['generation_num']
+        if parent2:
+            gn += parent2['lineage']['generation_num']
+
         lineage = Lineage(mutator=mutator,
                           parent1=parent1,
                           parent2=parent2,
-                          generation_num=0)
+                          generation_num=gn)
 
         return gene, lineage
 

@@ -17,18 +17,25 @@ import json
 import numpy
 from operator import add
 import os
+import threading
+
+import string
+import random
 
 import yaml
-
 
 class DataDict(object):
     _FLAG_FIRST = object()
 
-    def __init__(self, fitness_metrics=[], maximize=True, amount_per_bin=1):
+    def __init__(self, fitness_metrics=[], maximize=True, amount_per_bin=1, history_log=""):
         self.fitness_metrics = fitness_metrics
         self.maximize = maximize
         self.amount_per_bin = amount_per_bin
         self.dictionary = self.create_initial()
+        self.trial_count = 0
+        self.trial_count_lock = threading.Lock()
+        self.track_history = history_log is not None and len(history_log) > 0
+        self.history_log = history_log
 
     def get_dictionary(self):
         """
@@ -45,6 +52,11 @@ class DataDict(object):
         :return:
         """
         self.deep_update(self.dictionary, other)
+
+    def add_trials(self, trials):
+        self.trial_count_lock.acquire()
+        self.trial_count += trials
+        self.trial_count_lock.release()
 
     def update_from_population(self, population=[]):
         """
@@ -77,6 +89,12 @@ class DataDict(object):
             if self.has_metrics(individual):
                 key_path = self.get_corresponding_bin(individual)
                 self.dictionary = update(_dict=self.dictionary, key_path=key_path, value=individual)
+
+        if self.track_history and len(updated_individuals) > 0:
+            for new_item in updated_individuals:
+                with open(self.history_log, "a") as f:
+                    f.write(str(self.trial_count) + ": " + str(new_item['metrics']) + "\n")
+
         return self.dictionary, updated_individuals
 
     def has_metrics(self, individual):
@@ -211,7 +229,7 @@ class DataDict(object):
             else:
                 return key_path
 
-    def flatten_dict(self, d, join=add, lift=lambda x: x):
+    def flatten_dict(self, d):
         """
 
         :param d:
@@ -219,19 +237,18 @@ class DataDict(object):
         :param lift:
         :return:
         """
-
         results = []
 
         def visit(subdict, results, partialKey):
             for k, v in subdict.items():
-                k = "{}_._".format(str(k))
-                newKey = lift(k) if partialKey == self._FLAG_FIRST else join(partialKey, lift(k))
+                newKey = partialKey + (k,)
                 if isinstance(v, Mapping):
                     visit(v, results, newKey)
                 else:
-                    results.append((newKey, v))
-
-        visit(d, results, self._FLAG_FIRST)
+                    results.append((newKey, v))   
+                             
+        empty_key = ()
+        visit(d, results, empty_key)
         return results
 
     def get_non_empty_bins(self):
@@ -244,6 +261,11 @@ class DataDict(object):
         filtered = {k: v for k, v in original.items() if len(v) > 0}
         return filtered
 
+    def _get_best_metric(self, trials):
+        trials = sorted(trials, key=lambda x : x['metrics'][self.fitness_metrics[-1].name], reverse=self.maximize)
+        best = trials[0]
+        return best['metrics'][self.fitness_metrics[-1].name]
+
     def get_points(self):
         """
 
@@ -251,22 +273,12 @@ class DataDict(object):
         """
         self._FLAG_FIRST = object()
         flattened = self.flatten_dict(self.dictionary)
-        print("Top Performers Per bin:")
         points = []
-        for key, value in flattened:
-            if value:
-                # Key appears like beta_._0.0_._gammma_._
-                # split will result in ['beta', '0.0', 'gamma', "]
-                # since there is always the trailing split character _._ [-2] will result in the expected key
-                value = sorted(value, key=lambda x: key.split("_._")[-2], reverse=self.maximize)
-                individual = value[0]
-                i = individual['metrics'][self.fitness_metrics[-1].name]
+        for key, trials in flattened:
+            if trials:
+                i = self._get_best_metric(trials)
             else:
                 i = None
-
-            key = key.split('_._')[:-1]
-            key.append(i)
-            point = key[1::2]
-            points.append(tuple(point))
+            points.append((key[-2], i))
         return points
 

@@ -21,7 +21,8 @@ class GeneticAlgorithm(object):
         self.pareto_frontier = ParetoFrontier(experiment_dir=self.settings.output_dir,
                                               maximize=self.settings.optimization_strategy,
                                               fitness_metrics=Metrics(self.settings.optimization_metrics).metrics,
-                                              amount_per_bin=self.settings.individual_per_bin)
+                                              amount_per_bin=self.settings.individual_per_bin,
+                                              history_log=None)
 
         self.population = Population(pareto_frontier=self.pareto_frontier)
 

@@ -86,25 +86,30 @@ class BinaryBlockGene(GeneMutate):
     def mutate(self):
         return super().mutate()
 
-    def crossover(self):
-        """
-
-        :return:
-        """
-        
-        parents = [x for x in self.parents]
-
-        #Flips a number of genes to target `flip_to`
-        #First gathers all parent gene candidates
-        #If sufficient, selects a unique subset from weighted distribution
-        #Else augments with randomly selected genes
-        def flip(flip_num, flip_to):
+    #Checks that the number of genes on (set to 1) in `genes` falls within range `valid range`
+    #Else, flips the minimum number of genes to fit this range in the following manner:
+    #   From the set of genes that could be flipped, indentify those for which a parent has the target value,
+    #       i.e. crossover *could* have flipped this gene given a different dice roll
+    #   Flip genes from this set, weighting choices by the number of parents with the target value
+    #       - only applicable when # of parents > 2, since one parent must have conributed the "bad" gene)
+    #   If this subset is not sufficient in number, augment with additional random flips
+    #       - should only be necessary in the case of 0 parents, else parents are invalid
+    @staticmethod
+    def _ensure_valid(genes, valid_range, parents):
+        items_on = sum(x == 1 for x in genes.values())
+        if items_on > max(valid_range) or items_on < min(valid_range):
+            if items_on > max(valid_range):
+                flip_num = items_on - max(valid_range)
+                flip_to = 0
+            else:
+                flip_num = min(valid_range) - items_on
+                flip_to = 1
             keys = []
             unique_keys = set()
             for p in parents:
                 for key, item in p.items():
                     if item == flip_to:
-                        if _dict[key] != flip_to:
+                        if genes[key] != flip_to:
                             keys.append(key)
                             if key not in unique_keys:
                                 unique_keys.add(key)
@@ -112,7 +117,7 @@ class BinaryBlockGene(GeneMutate):
             flip_set = set()
             if len(unique_keys) < flip_num:
                 remaining_num = flip_num - len(unique_keys)
-                remaining_candidates = list(filter(lambda x: _dict[x] != flip_to and x not in unique_keys, _dict))                        
+                remaining_candidates = list(filter(lambda x: genes[x] != flip_to and x not in unique_keys, genes))                        
                 flip_set = unique_keys.union(set(np.random.choice(remaining_candidates, size=remaining_num, replace=False)))
             else:
                 while len(flip_set) < flip_num:
@@ -120,7 +125,14 @@ class BinaryBlockGene(GeneMutate):
                     flip_set = flip_set.union(set(np.random.choice(keys, size=remaining_num, replace=False)))
                     keys = list(filter(lambda x: x not in flip_set, keys))
             for i in flip_set:
-                _dict[i] = flip_to
+                genes[i] = flip_to
+
+    def crossover(self):
+        """
+
+        :return:
+        """
+        parents = [x for x in self.parents]
 
         if parents:
             _dict = {}
@@ -128,17 +140,9 @@ class BinaryBlockGene(GeneMutate):
                 selected_parent = np.random.randint(0, len(parents))
                 _dict[key] = parents[selected_parent][key]
             valid_range = self.dictionary.get('sum_range')
-            items_on = sum(x == 1 for x in _dict.values())
-            if items_on > max(valid_range) or items_on < min(valid_range):
-                if items_on > max(valid_range):
-                    flip_num = items_on - max(valid_range)
-                    flip_to = 0
-                else:
-                    flip_num = min(valid_range) - items_on
-                    flip_to = 1
-                flip(flip_num, flip_to)
-
+            BinaryBlockGene._ensure_valid(_dict, valid_range, parents)
             return _dict
+
         return self.random()
 
     def random(self):
@@ -146,17 +150,13 @@ class BinaryBlockGene(GeneMutate):
 
         :return:
         """
-        allowed_range = self.dictionary.get('sum_range')
-        amount = random.randint(min(allowed_range), max(allowed_range))
-        amount = int(amount)
         components = self.dictionary.get('components')
         key_len = len(list(components.keys()))
-        if key_len < amount or key_len < max(allowed_range):
-            raise Exception("Amount specified is larger than binary block size")
-        selected = np.random.choice(np.asarray(list(components.keys())), size=amount, replace=False)
+        for key in components.keys():
+            components[key] = np.random.choice(2)
+        valid_range = self.dictionary.get('sum_range')
+        BinaryBlockGene._ensure_valid(components, valid_range, [])
 
-        for item in selected:
-            components[item] = 1
         return components
 
     def gaussian_step(self):

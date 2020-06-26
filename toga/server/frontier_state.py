@@ -2,7 +2,6 @@ import asyncio
 import json
 import os
 import shutil
-import threading
 
 import yaml
 from aiohttp import web
@@ -20,8 +19,6 @@ class FrontierState(object):
         self.history = {}
         self.workers = {}
         self.generation_number = 0
-        self.global_trial_count = 0
-        self.trial_count_lock = threading.Lock()
 
     async def submit_individual(self, request: web.Request) -> web.json_response():
         """
@@ -31,12 +28,10 @@ class FrontierState(object):
         """
         individual = await request.json()
         if individual is not None:
+            count = individual.get('trials')
+            self.pareto_frontier.datadict.add_trials(count)
             self.pareto_frontier.evaluate_fitness([individual])
             uuid = individual.get('uuid')
-            count = individual.get('trials')
-            self.trial_count_lock.acquire()
-            self.global_trial_count += count
-            self.trial_count_lock.release()
             response = {'individual': uuid, 'status': 'successfully stored'}
             return web.json_response(json.dumps(response))
         response = {'Malformed sample was sent, not storing'}
