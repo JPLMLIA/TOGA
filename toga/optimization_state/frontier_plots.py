@@ -159,8 +159,8 @@ class Plot(object):
         axes = plt.gca()
         axes.set_ylim(tuple(y_lim))
 
-        if len(points) < self.max_tick_count:
-            x_ticks = np.linspace(x_lim[0], x_lim[1], len(points))
+        if len(points) + 1 < self.max_tick_count:
+            x_ticks = np.linspace(x_lim[0], x_lim[1], len(points) + 1)
         else:
             x_ticks = np.linspace(x_lim[0], x_lim[1], self.max_tick_count)
 
@@ -212,7 +212,6 @@ class Plot(object):
         _datetime = f'{now.year}_{now.month}_{now.day}_{now.hour}_{now.minute}_{now.second}'
         plt.savefig(os.path.join(self.save_dir, f'{_datetime}.png'))
         plt.clf()
-
 
 if __name__ == '__main__':
     import doctest

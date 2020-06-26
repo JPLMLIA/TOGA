@@ -159,9 +159,11 @@ class DataDict(object):
             else:
                 _range = _.axis_range
                 partitions = array[-1].partitions
-                _dict[_.name] = {round(el, 2): dictionary for el in numpy.linspace(min(_range),
-                                                                                   max(_range),
-                                                                                   num=partitions)}
+                #Solve fencepost problem here
+                #We need N bins so we create N+1 evenly spaced fenceposts with numpy.linspace
+                #Only need left endpoint of each bin, so throwaway the last one
+                bin_labels = numpy.linspace(min(_range), max(_range), num=partitions+1)[:-1]
+                _dict[_.name] = {round(el, 2): dictionary for el in bin_labels}
                 return helper(_dict, array[:-1])
         return json.loads(json.dumps(helper({}, input_arr)))
 
