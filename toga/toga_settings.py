@@ -54,6 +54,11 @@ class Settings(metaclass=Singleton):
         # output directory for TOGA files
         self.output_dir = run_settings['work_dir']['base_dir']
 
+        # optional setting to add file path for logging best candidates
+        self.history_log = None
+        if 'history_log' in run_settings.keys(): 
+            self.history_log = os.path.join(self.output_dir, run_settings['history_log'])
+
         # Settings used to make a runnable command for toga gene testing
         # source activate /anaconda3/etc/profile.d/conda.sh; conda activate helm36;
         #       toga_wrapper --tracker_config /path/to/toga_generated/config.yml
