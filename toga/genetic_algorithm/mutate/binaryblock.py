@@ -165,22 +165,28 @@ class BinaryBlockGene(GeneMutate):
     def gaussian_random(self):
         return self.random()
 
+    def _get_random_component_set(self, amount):
+        components = self.dictionary.get('components')
+        allowed_range = self.dictionary.get('sum_range')
+        keys = list(components.keys())
+        key_len = len(keys)
+        if key_len < amount or amount < min(allowed_range) or key_len > max(allowed_range):
+            raise Exception("Amount specified is larger than block size or outside allowed range")
+        ids = np.random.choice(key_len, size=amount, replace=False)
+        for i in ids:
+            components[keys[i]] = 1
+        return components
+
     def scaled(self):
         """
 
         :return:
         """
         allowed_range = self.dictionary.get('sum_range')
-        amount = int(math.ceil(max(allowed_range) * self.percentage))
-        components = self.dictionary.get('components')
-        key_len = len(list(components.keys()))
-        if key_len < amount or key_len < max(allowed_range):
-            raise Exception("Amount specified: {} is larger than max allowed binary block size: {}"
-                            " or elements in block: {}".format(amount, max(allowed_range), key_len))
-        selected = np.random.choice(np.asarray(list(components.keys())), size=amount, replace=False)
-        for item in selected:
-            components[item] = 1
-        return components
+        _min = min(allowed_range)
+        _max = max(allowed_range)
+        amount = int(math.ceil(_min + (_max - _min) * self.percentage))
+        return self._get_random_component_set(amount)
 
     def minimum(self):
         """
@@ -197,14 +203,7 @@ class BinaryBlockGene(GeneMutate):
         """
         allowed_range = self.dictionary.get('sum_range')
         amount = max(allowed_range)
-        components = self.dictionary.get('components')
-        key_len = len(list(components.keys()))
-        if key_len < amount or key_len < max(allowed_range):
-            raise Exception("Amount specified is larger than binary block size")
-        selected = np.random.choice(np.asarray(list(components.keys())), size=amount, replace=False)
-        for item in selected:
-            components[item] = 1
-        return components
+        return self._get_random_component_set(amount)
 
 
 if __name__ == "__main__":
