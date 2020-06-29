@@ -34,14 +34,6 @@ class Optimization(object):
     Optimization wrapper object for TOGA test case
     """
 
-    @staticmethod
-    def parseEnumBlock(d):
-        for key in d:
-            if d[key]:
-                return key
-        for key in d: #default to first
-            return key
-
     def __init__(self, parameters_config=''):
         self.param_config = self.read_input_params(parameters_config)
 
@@ -49,9 +41,9 @@ class Optimization(object):
         data_directory = '/scratch_lg/owls-dev/schibler/datasets/'
         conv3_depth = self.param_config['conv3_depth']
         conv4_depth = self.param_config['conv4_depth']
-        pooling = self.parseEnumBlock(self.param_config['pooling'])
-        optimizer = self.parseEnumBlock(self.param_config['optimizer'])
-        resnet_version = self.parseEnumBlock(self.param_config['resnet_version'])
+        pooling = self.param_config['pooling']
+        optimizer = self.param_config['optimizer']
+        resnet_version = self.param_config['resnet_version']
         learning_rate = 10 ** (-1 * self.param_config['learning_neg_exponent'])
 
         p = self.optimize_this_function(trial_directory, data_directory, conv3_depth, conv4_depth, 

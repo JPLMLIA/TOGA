@@ -1,29 +1,18 @@
 conv3_depth:
-  param_type: 'int'
-  range: [4, 8]
+  param_type: 'enum'
+  values: [4, 8]
 conv4_depth:
-  param_type: 'int'
-  range: [6, 36]
+  param_type: 'enum'
+  values: [6, 23, 36]
 pooling:
-  components:
-    avg: 0
-    max: 0
-  sum_range: [1, 1]
-  param_type: 'binary_block'
+  values: ['avg', 'max']
+  param_type: 'enum'
 optimizer:
-  components:
-    adam: 0
-    rmsprop: 0
-    sgd: 0
-  sum_range: [1, 1]
-  param_type: 'binary_block'
+  values: ['adam', 'rmsprop', 'sgd']
+  param_type: 'enum'
 resnet_version:
-  components:
-    v1: 0
-    v2: 0
-    next: 0
-  sum_range: [1, 1]
-  param_type: 'binary_block'
+  values: ['v1', 'v2', 'next']
+  param_type: 'enum'
 learning_neg_exponent:
   param_type: 'float'
   range: [1, 4]
