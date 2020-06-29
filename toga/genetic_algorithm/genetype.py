@@ -37,6 +37,7 @@ class GeneType(str, enum.Enum):
     IntType = ('int', ['range'])
     BoolType = ('bool', [])
     BinaryBlockType = ('binary_block', ['components', 'sum_range'])
+    EnumType = ('enum', ['values'])
 
     def __new__(cls, value, keys):
         obj = str.__new__(cls, value)

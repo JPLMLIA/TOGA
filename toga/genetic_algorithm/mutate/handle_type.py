@@ -5,6 +5,7 @@ from toga.genetic_algorithm.mutate.binaryblock import BinaryBlockGene
 from toga.genetic_algorithm.mutate.bool import BooleanGene
 from toga.genetic_algorithm.mutate.float import FloatGene
 from toga.genetic_algorithm.mutate.int import IntGene
+from toga.genetic_algorithm.mutate.enum import EnumGene
 
 
 def select_mutator(mutators):
@@ -54,4 +55,13 @@ def mutate(gene_type: GeneType.IntType, range_config: dict, value, values: list,
                             mutator,
                             mutator_params
                             ).mutate()
+    if gene_type == 'enum':   
+        frequency = mutator_params.get('enum')
+        mutator = select_mutator(frequency)
+        _ = EnumGene(range_config,
+                     values,
+                     mutator,
+                     mutator_params
+                     ).mutate()
+                     
     return _
