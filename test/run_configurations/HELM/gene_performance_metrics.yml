@@ -6,12 +6,12 @@
 fitness:
     # from helm we have Precision/Recall saved to a metrics dataframe that TOGA will reference
 
-  precision:
-    fixed_axis: True
-    range: [0,1]
-    partitions: 10
-    index: 0
-  recall: # A fixed axis treats all values in some range as 1 value. [0, 400] with 10 partitions means, all numbers 0-40 are treated as 1 value.
+  #precision:
+  #  fixed_axis: True
+  #  range: [0,1]
+  #  partitions: 10
+  #  index: 0
+  f_1: # A fixed axis treats all values in some range as 1 value. [0, 400] with 10 partitions means, all numbers 0-40 are treated as 1 value.
     fixed_axis: False 
     range: [0, 1]
     partitions: 1

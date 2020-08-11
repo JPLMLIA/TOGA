@@ -1,3 +1,45 @@
 output: "temp/"
 metrics: "metrics.csv"
 debug: False
+
+detection:
+  algorithm_settings:
+    helm_orig:
+      threshold:
+        param_type: "float"
+        range: [0.1, 100]
+      epsilon_px:
+        param_type: "float"
+        range: [1, 20]
+      min_weight:
+        param_type: "float"
+        range: [1, 1024]
+      min_px:
+        param_type: "int"
+        range: [1, 20]
+      noise_px:
+        param_type: "float"
+        range: [0.1, 10]
+      max_uncert_px:
+        param_type: "float"
+        range: [1, 100]
+  detection:
+    max_assignment_sigma:
+      param_type: "float"
+      range: [1, 5]
+    min_track_obs:
+      param_type: "int"
+      range: [1, 30]
+    max_position_uncertainty:
+      param_type: "int"
+      range: [10, 300]
+    minmax:
+      lag:
+        param_type: "int"
+        range: [1, 500]
+      absthresh:
+        param_type: "int"
+        range: [2, 10]
+      pcthresh:
+        param_type: "float"
+        range: [90, 99.9]

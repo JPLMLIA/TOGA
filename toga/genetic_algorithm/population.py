@@ -36,8 +36,11 @@ class Population(object):
         self.population = None
 
     def create_individual(self, config):
-        with open(config, 'r') as f:
-            gene = yaml.safe_load(f)
+        try:
+            with open(config, 'r') as f:
+                gene = yaml.safe_load(f)
+        except yaml.YAMLError as exc:
+            print(exc)
         individual = Individual(uuid=uuid.uuid4().hex)
         individual.genetics, individual.lineage = self.mutate(config=gene)
 
@@ -82,9 +85,7 @@ class Population(object):
         if not parents:
             gene = Genetics(GeneTree(config=config, parents=None, mutator=mutator,
                                      mutator_params={'type_probability': self.gene_mutation_type}).mutate())
-
             lineage = Lineage(mutator=mutator, parent1=None, parent2=None, generation_num=0)
-
             return gene, lineage
 
         parent1 = parents[0]
