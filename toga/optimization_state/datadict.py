@@ -281,6 +281,9 @@ class DataDict(object):
                 i = self._get_best_metric(trials)
             else:
                 i = None
-            points.append((key[-2], i))
+            if len(key) > 1:
+                points.append((key[-2], i))
+            else:
+                points.append((key[-1], i))
         return points
 
