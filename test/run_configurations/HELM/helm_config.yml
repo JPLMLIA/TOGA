@@ -1,6 +1,7 @@
 output: "temp/"
 metrics: "metrics.csv"
 debug: False
+metric_names: ['f_1'] #The helm metrics to optimize over
 
 # Comments show results from initial simulator run
 
