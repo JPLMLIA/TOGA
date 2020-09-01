@@ -7,21 +7,21 @@
 metrics_location: "temp/metrics.csv"
 
 # path to file that has parameters and ranges of hyperparameters being optimized
-gene_template: "/Users/schibler/Documents/TOGA/test/run_configurations/HELM/helm_config.yml"
+gene_template: "/home/schibler/TOGA/test/run_configurations/HELM/helm_config.yml"
 
 # --------
 # toga worker settings
 workers:
-  max_workers: 1 # how many processes should each worker machine run
-  max_run_time: 3600 # time in seconds before run auto fails
-  over_fill_executor: 5
+  max_workers: 8 # how many processes should each worker machine run
+  max_run_time: 10800 # time in seconds before run auto fails
+  over_fill_executor: 10
 
 # --------
 # where toga will write to
 work_dir:
-  base_dir: "/Users/schibler/Documents/helm_experiment_dir"
+  base_dir: "/home/schibler/helm_experiment_dir"
 
-#history_log: "history.txt"
+history_log: "history.txt"
 
 # --------
 # make a runnable command for your process under optimization
@@ -33,12 +33,11 @@ environment:
     environment_name: "helm36" # example: helm36
   conda_shell_executable_location: "/anaconda3/etc/profile.d/conda.sh" # Use if running on mac os x
 
-
 # makes a runnable command out of the arguments and assumes your system arguments are handled with argparse
 command:
-    cmd: "python /Users/schibler/Desktop/OWLS-Autonomy/src/cli/TOGA_wrapper.py"
+    cmd: "python /home/schibler/OWLS-Autonomy/src/cli/TOGA_wrapper.py"
     # which argparse argument does your hyper parameters config file map to?
     gene_mapping:
       key: "-c"
     # write your extra arguments that you need to run your system under test that won't change each run
-    static_args: "--experiment_dir '/Users/schibler/Desktop/mugshots/2019_11_12_09_59_14_007_medium_motile_DHM_No'"
+    static_args: "--experiment_dir '/data/MLIA_active_data/data_OWLS/HELM/data/simulated/HELM14/easy_01/train/*'"

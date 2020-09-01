@@ -21,8 +21,8 @@ mutators:
   type:
     int:
       random: 10
-      gaussian_step: 90
-      crossover: 0
+      gaussian_step: 60
+      crossover: 30
       gaussian_random: 0
     float:
       random: 10

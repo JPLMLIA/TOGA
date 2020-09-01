@@ -1,48 +1,40 @@
 output: "temp/"
 metrics: "metrics.csv"
 debug: False
-metric_names: ['f_1'] #The helm metrics to optimize over
+metric_names: ['pred_over_true_ratio', 'f_1'] #The helm metrics to optimize over
 
-# Comments show results from initial simulator run
+show_plots: False
+
+evaluation:
+  points:
+    point_eval_dist_threshold: 3
 
 detection:
   algorithm_settings:
     helm_orig:
-      threshold: #0.1
+      epsilon_px:
         param_type: "float"
-        range: [0.1, 100]
-      epsilon_px: #3.5
+        range: [0, 30]
+      min_weight:
         param_type: "float"
-        range: [1, 20]
-      min_weight: # 1
-        param_type: "float"
-        range: [1, 1024]
-      min_px: # 2
+        range: [0, 1024]
+      min_px:
         param_type: "int"
-        range: [1, 20]
-      noise_px: # 0.1
-        param_type: "float"
-        range: [0.1, 10]
-      max_uncert_px: # 100
-        param_type: "float"
-        range: [1, 100]
+        range: [0, 20]
     detection:
-      max_assignment_sigma: # 5
+      max_assignment_dist:
         param_type: "float"
-        range: [1, 5]
-      min_track_obs: # < 23
+        range: [0, 50]
+      min_track_obs:
         param_type: "int"
         range: [1, 30]
-      max_position_uncertainty:  #266
-        param_type: "int"
-        range: [10, 300]
       minmax:
-        lag: # 345 
+        lag: 
           param_type: "int"
-          range: [1, 500]
-        absthresh: # 2
+          range: [0, 20]
+        absthresh:
           param_type: "int"
-          range: [2, 10]
-        pcthresh: # 94.4
+          range: [0, 10]
+        pcthresh:
           param_type: "float"
           range: [90, 99.9]
