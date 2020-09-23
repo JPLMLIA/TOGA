@@ -1,40 +1,53 @@
 output: "temp/"
 metrics: "metrics.csv"
 debug: False
-metric_names: ['pred_over_true_ratio', 'f_1'] #The helm metrics to optimize over
+#metric_names: ['pred_over_true_ratio', 'track_f_1'] #The helm metrics to optimize over
+metric_names: ['f_1']
 
 show_plots: False
 
 evaluation:
   points:
-    point_eval_dist_threshold: 3
+    point_eval_dist_threshold: 10
 
-detection:
-  algorithm_settings:
-    helm_orig:
+tracker_settings:
+  skip_frames: 0
+  diff_comp:
+    median_window:
+      param_type: "int"
+      range: [1, 50]
+    absthresh:
+      param_type: "int"
+      range: [1, 255]
+    pcthresh:
+      param_type: "float"
+      range: [0.1, 99.9]
+  clustering:
+    dbscan:
       epsilon_px:
         param_type: "float"
-        range: [0, 30]
+        range: [0.1, 100]
       min_weight:
         param_type: "float"
-        range: [0, 1024]
+        range: [0, 131072.0]
+    filters:  
       min_px:
         param_type: "int"
-        range: [0, 20]
-    detection:
-      max_assignment_dist:
-        param_type: "float"
-        range: [0, 50]
-      min_track_obs:
-        param_type: "int"
-        range: [1, 30]
-      minmax:
-        lag: 
-          param_type: "int"
-          range: [0, 20]
-        absthresh:
-          param_type: "int"
-          range: [0, 10]
-        pcthresh:
-          param_type: "float"
-          range: [90, 99.9]
+        range: [0, 100]
+  tracking:
+    max_assignment_dist:
+      param_type: "float"
+      range: [0, 50]
+    min_track_obs:
+      param_type: "int"
+      range: [1, 30]
+    use_acceleration:
+      param_type: "int"
+      range: [0, 1]
+    allow_cluster_aggregation: 0
+      #param_type: "int"
+      #range: [0, 1]
+    max_projected_frames:
+      param_type: "int"
+      range: [0, 30]
+      
