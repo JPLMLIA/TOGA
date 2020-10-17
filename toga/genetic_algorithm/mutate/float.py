@@ -66,7 +66,7 @@ class FloatGene(GeneMutate):
             values = self.dictionary.get('range')
 
             scale = np.abs((max(values) - min(values)))
-            new_var = np.random.normal(loc=original, scale=scale)
+            new_var = np.random.normal(loc=original, scale=scale/4)
             new_var = max(min(values), new_var)
             new_var = min(max(values), new_var)
             return float(new_var)
